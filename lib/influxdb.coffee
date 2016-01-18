@@ -17,25 +17,30 @@ class Client
     version = @config.get('influxdb.version').get() ? '0.9'
     host = @config.get('influxdb.host').get() ? 'localhost'
     port = @config.get('influxdb.port').get() ? 8086
-    database = @config.get('influxdb.database').get() ? 'bucky'
-    username = @config.get('influxdb.username').get() ? 'root'
-    password = @config.get('influxdb.password').get() ? 'root'
+    database = @config.get('influxdb.database').get() ? ''
+    username = @config.get('influxdb.username').get() ? ''
+    password = @config.get('influxdb.password').get() ? ''
     logger = @logger
+
     if version == '0.8'
       endpoint = 'http://' + host + ':' + port + '/db/' + database + '/series'
     else
       endpoint = 'http://' + host + ':' + port + '/write'
+
+    logger.log('influxDB Version: v' + version)
+    logger.log('influxDB Endpoint: ' + endpoint)
+
     client = request.defaults
       method: 'POST'
       url: endpoint
       qs:
+        db: database
         u: username
         p: password
 
     (metricsJson) ->
       client form: metricsJson, (error, response, body) ->
         logger.log error if error
-
   sendUDP: ->
     host = @config.get('influxdb.host').get() ? 'localhost'
     port = @config.get('influxdb.port').get() ? 4444
@@ -71,7 +76,8 @@ class Client
             value: parseFloat val
             unit: unit
             sample: sample
-    # @logger.log(JSON.stringify(data, null, 2))
+
+    @logger.log(JSON.stringify(data, null, 2))
     JSON.stringify data
 
   parseRow: (row) ->
