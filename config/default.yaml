@@ -23,6 +23,6 @@ modules:
 
   collectors:
     - ./modules/collectionLogger
-    - ./modules/statsd
-    - ./modules/openTSDB
+#    - ./modules/statsd
+#    - ./modules/openTSDB
     - ./modules/influxdb
