@@ -2,25 +2,16 @@ server:
   port: 5999
   appRoot: "/bucky"
 
-statsd:
-  host: 'localhost'
-  port: 8125
-
-opentsdb:
-  host: 'localhost'
-  port: 4242
-
 influxdb:
-  host: 'localhost'
+  host: ''
+  database: ''
+  username: ''
+  password: ''
   port: 8086
-  database: 'bucky'
-  username: 'root'
-  password: 'root'
-  use_udp: false
   retentionPolicy: 'default'
-  # Acceptable version are: '0.8' and '0.9'
-  version: '0.9'
-
+  precision: 's'
+  use_udp: false
+  version: '0.9' # Acceptable version are: '0.8' and '0.9'
 
 modules:
   # The modules just get require'd in, so they don't have to be in the Bucky project.
@@ -31,8 +22,7 @@ modules:
     - ./modules/collectors
 
   collectors:
-  # Uncomment the modules that you'd like to use
-    # - ./modules/collectionLogger
-    # - ./modules/statsd
-    # - ./modules/openTSDB
-    # - ./modules/influxdb
+    - ./modules/collectionLogger
+    - ./modules/statsd
+    - ./modules/openTSDB
+    - ./modules/influxdb
