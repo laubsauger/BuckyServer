@@ -27,7 +27,7 @@ class Client
     else
       endpoint = 'http://' + host + ':' + port + '/write'
 
-    logger.log('influxDB Version: v' + version)
+    logger.log('influxDB Version: ' + version)
     logger.log('influxDB Endpoint: ' + endpoint)
 
     client = request.defaults
