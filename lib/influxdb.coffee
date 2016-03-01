@@ -2,7 +2,7 @@ request = require('request')
 dgram = require('dgram')
 
 class Client
-  constructor: (@config={}, @logger) ->
+  constructor: (@config = {}, @logger) ->
     do @init
 
   init: ->
@@ -22,13 +22,7 @@ class Client
     password = @config.get('influxdb.password').get() ? ''
     logger = @logger
 
-    if version == '0.8'
-      endpoint = 'http://' + host + ':' + port + '/db/' + database + '/series'
-    else
-      endpoint = 'http://' + host + ':' + port + '/write'
-
-    logger.log('influxDB Version: ' + version)
-    logger.log('influxDB Endpoint: ' + endpoint)
+    endpoint = 'http://' + host + ':' + port + '/write'
 
     client = request.defaults
       method: 'POST'
@@ -53,29 +47,20 @@ class Client
 
   metricsJson: (metrics) ->
     version = @config.get('influxdb.version').get() ? '0.9'
-    if version == '0.8'
-      data = []
-    else
-      data =
-        database: @config.get('influxdb.database').get() ? 'bucky'
-        retentionPolicy: @config.get('influxdb.retentionPolicy').get() ? "default"
-        time: new Date().toISOString()
-        points: []
+    data =
+      database: @config.get('influxdb.database').get() ? 'bucky'
+      retentionPolicy: @config.get('influxdb.retentionPolicy').get() ? "default"
+      time: new Date().toISOString()
+      points: []
     for key, desc of metrics
       [val, unit, sample] = @parseRow desc
 
-      if version == '0.8'
-        data.push
-          name: key,
-          columns: ['value'],
-          points: [[parseFloat val]]
-      else
-        data.points.push
-          measurement: key
-          fields:
-            value: parseFloat val
-            unit: unit
-            sample: sample
+      data.points.push
+        measurement: key
+        fields:
+          value: parseFloat val
+          unit: unit
+          sample: sample
 
     @logger.log(JSON.stringify(data, null, 2))
     JSON.stringify data
