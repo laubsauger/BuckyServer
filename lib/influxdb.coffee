@@ -53,20 +53,20 @@ class Client
       time: new Date().toISOString()
       points: []
     for key, desc of metrics
-      [val, unit, sample] = @parseRow desc
+      [val, unit, tags] = @parseRow desc
 
       data.points.push
         measurement: key
         fields:
           value: parseFloat val
           unit: unit
-          sample: sample
+          tags: tags
 
     @logger.log(JSON.stringify(data, null, 2))
     JSON.stringify data
 
   parseRow: (row) ->
-    re = /([0-9\.]+)\|([a-z]+)(?:@([0-9\.]+))?/
+    re = /([0-9\.]+)\|([a-z]+)(?:@[0-9\.]+)?\|(.*)/
 
     groups = re.exec(row)
 
@@ -74,6 +74,6 @@ class Client
       @logger.log "Unparsable row: #{ row }"
       return
 
-    groups.slice(1, 4)
+    groups.slice(1, 5)
 
 module.exports = Client
