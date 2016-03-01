@@ -53,23 +53,25 @@ class Client
       time: new Date().toISOString()
       points: []
     for key, desc of metrics
-      [val, unit, tags] = @parseRow desc
+      [val, unit, sample, tags] = @parseRow desc
 
       data.points.push
         measurement: key
         fields:
           value: parseFloat val
           unit: unit
+          sample: sample
           tags: tags
 
     @logger.log(JSON.stringify(data, null, 2))
     JSON.stringify data
 
   parseRow: (row) ->
-    re = /([0-9\.]+)\|([a-z]+)(?:@[0-9\.]+)?\|(.*)/
+    re = /([0-9\.]+)\|([a-z]+)(?:\|@([0-9\.]+))?(?:\|(.*))?/
 
     groups = re.exec(row)
 
+    console.log groups
     unless groups
       @logger.log "Unparsable row: #{ row }"
       return
